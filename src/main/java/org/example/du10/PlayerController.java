@@ -1,7 +1,5 @@
 package org.example.du10;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 
@@ -9,10 +7,6 @@ import java.util.List;
 public class PlayerController {
     private final PlayerRepository repository;
 
-    @Bean
-    CommandLineRunner initDatabase(PlayerRepository repository) {
-        return args -> {};
-    }
     public PlayerController(PlayerRepository repository) {
         this.repository = repository;
     }
@@ -26,17 +20,17 @@ List<Player> getAll() {
 // end::get-aggregate-root[]
 
 @PostMapping("/players")
-Player newPlayer(@RequestBody player newPlayer) {
+Player newPlayer(@RequestBody Player newPlayer) {
     return repository.save(newPlayer);
 }
 
 // Single item
 
 @GetMapping("/players/{id}")
-Player getById(@PathVariable Long id) {
+Player getById(@PathVariable Long id) throws Exception {
 
     return repository.findById(id)
-            .orElseThrow(() -> new EmployeeNotFoundException(id));
+            .orElseThrow(Exception::new);
 }
 
 @PutMapping("/players/{id}")
@@ -45,7 +39,8 @@ Player replacePlayer(@RequestBody Player newPlayer, @PathVariable Long id) {
     return repository.findById(id)
             .map(player -> {
                 player.setName(newPlayer.getName());
-                player.setRole(newPlayer.getRole());
+                player.setMana(newPlayer.getMana());
+                player.setHealth(newPlayer.getHealth());
                 return repository.save(player);
             })
             .orElseGet(() -> {
